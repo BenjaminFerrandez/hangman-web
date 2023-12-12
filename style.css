@@ -1,10 +1,6 @@
-input[type="button"] {
-  background-color: #a61e4d;
-  color: #a72020;
-  padding: 15px 25px;
-  border: none;
-}
-
-input[type="button"]:hover {
-   background-color: #d6336c;
+body{
+  background-image: url(images/fond.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
 }
