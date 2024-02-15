@@ -1,20 +1,12 @@
 package main
 
-import "net/http"
-import "fmt"
+const PORT = ":8080"
 
-var port = ":8080"
-
-func Home(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello world!")
-}
-
-func Contact(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "contactez moi")
-}
+var run = true
+var wordToFind = "IPHONE"
 
 func main() {
-	http.HandleFunc("/", Home)
-	http.HandleFunc("/contact", Contact)
-	http.ListenAndServe(port, nil)
+	for run {
+		web()
+	}
 }
