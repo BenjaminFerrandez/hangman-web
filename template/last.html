@@ -1,116 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hangman Web</title>
-  <link rel="stylesheet" href="../style/style2.css">
-</head>
+<html>
+  <head>
+    <title>Hangman Web</title>
+    <link rel="stylesheet" href="../style/style2.css">
+  </head>
 
-<body background="../assets/fond.jpg">
-  <h1>Jeu du Pendu</h1>
-  <div id="attempts"></div>
-  <div class="hangman" id="hangman"></div>
-  <div class="word" id="word"></div>
-  <div class="letters" id="letters"></div>
-  <div class="buttons">
-    <div class="button" id="play-again">Rejouer</div>
-  </div>
+  <body background="../assets/fond.jpg">
+    <h1>Jeu du Pendu</h1>
+    <div id="attempts"></div>
+    <div class="hangman" id="hangman"></div>
+    <div class="word" id="word"></div>
+    <div class="letters" id="letters"></div>
+    <div class="buttons">
+      <div class="button" id="play-again">Rejouer</div>
+    </div>
 
-  <script>
-    // Liste de mots pour le jeu
-    const words = ["cliche", "poncif", "francais", "anglais", "espagnol", "sieste", "coq", "the", "kabyle", "bateau", "voiture", "chameau", "entourloupe", "chomage", "fromage", "dormir", "chasser"];
+    <script>
+      // Liste de mots pour le jeu
+      const words = ["cliche", "poncif", "francais", "anglais", "espagnol", "sieste", "coq", "the", "kabyle", "bateau", "voiture", "chameau", "entourloupe", "chomage", "fromage", "dormir", "chasser"];
 
-    let chosenWord, maxAttempts, attemptsLeft, guessedLetters;
+      let chosenWord, maxAttempts, attemptsLeft, guessedLetters;
 
-    function startGame() {
-      chosenWord = words[Math.floor(Math.random() * words.length)];
-      maxAttempts = 6;
-      attemptsLeft = maxAttempts;
-      guessedLetters = [];
+      function startGame() {
+        chosenWord = words[Math.floor(Math.random() * words.length)];
+        maxAttempts = 6;
+        attemptsLeft = maxAttempts;
+        guessedLetters = [];
 
-      // Afficher le nombre d'essais restants
-      document.getElementById("attempts").textContent = "Essais restants : " + attemptsLeft;
+        // Nombre d'essais restants
+        document.getElementById("attempts").textContent = "Essais restants : " + attemptsLeft;
 
-      // Afficher les tirets pour le mot à deviner
-      let wordDisplay = chosenWord.replace(/\w/g, "_").split('').join(' ');
-      document.getElementById("word").textContent = wordDisplay;
+        // Afficher les tirets pour le mot à deviner
+        let wordDisplay = chosenWord.replace(/\w/g, "_").split('').join(' ');
+        document.getElementById("word").textContent = wordDisplay;
 
-      // Réinitialiser l'affichage du pendu
-      updateHangman();
+        // Réinitialiser l'affichage
+        updateHangman();
 
-      // Réinitialiser les boutons de lettres
-      generateAlphabetButtons();
-    }
-
-    // Générer les boutons pour les lettres de l'alphabet
-    function generateAlphabetButtons() {
-      for (let i = 0; i < 26; i++) {
-        let letter = String.fromCharCode(97 + i); // ASCII code pour 'a' est 97
-        let button = document.createElement("div");
-        button.textContent = letter;
-        button.classList.add("letter");
-        button.addEventListener("click", () => guessLetter(letter));
-        document.getElementById("letters").appendChild(button);
+        // Réinitialiser les lettres
+        generateAlphabetButtons();
       }
-    }
 
-    // Fonction pour vérifier si la lettre devinée est correcte
-    function guessLetter(letter) {
-      if (!guessedLetters.includes(letter)) {
-        guessedLetters.push(letter);
-        if (!chosenWord.includes(letter)) {
-          attemptsLeft--;
-          updateHangman();
-          document.getElementById("attempts").textContent = "Essais restants : " + attemptsLeft;
+      // Générer les lettres
+      function generateAlphabetButtons() {
+        for (let i = 0; i < 26; i++) {
+          let letter = String.fromCharCode(97 + i); // Utilisation de la table ASCII
+          let button = document.createElement("div");
+          button.textContent = letter;
+          button.classList.add("letter");
+          button.addEventListener("click", () => guessLetter(letter));
+          document.getElementById("letters").appendChild(button);
         }
-        let newWordDisplay = "";
-        for (let char of chosenWord) {
-          if (guessedLetters.includes(char)) {
-            newWordDisplay += char + ' ';
-          } else {
-            newWordDisplay += "_ ";
+      }
+
+      // Vérifie si la lettre devinée est correcte
+      function guessLetter(letter) {
+        if (!guessedLetters.includes(letter)) {
+          guessedLetters.push(letter);
+          if (!chosenWord.includes(letter)) {
+            attemptsLeft--;
+            updateHangman();
+            document.getElementById("attempts").textContent = "Essais restants : " + attemptsLeft;
+          }
+          let newWordDisplay = "";
+          for (let char of chosenWord) {
+            if (guessedLetters.includes(char)) {
+              newWordDisplay += char + ' ';
+            } else {
+              newWordDisplay += "_ ";
+            }
+          }
+          document.getElementById("word").textContent = newWordDisplay;
+          if (!newWordDisplay.includes("_")) {
+            // Message de victoire
+            document.getElementById("word").textContent = "Bien joué ! Tu as trouvé le mot : " + chosenWord;
+            document.getElementById("letters").innerHTML = ""; // Cache les lettres
+          } else if (attemptsLeft === 0) {
+            // Message de defaite
+            document.getElementById("word").textContent = "Loser ! Le mot était : " + chosenWord + ". C'était facile quand même.";
+            document.getElementById("letters").innerHTML = ""; // Cache les lettres
           }
         }
-        document.getElementById("word").textContent = newWordDisplay;
-        if (!newWordDisplay.includes("_")) {
-          // Toutes les lettres ont été devinées, afficher un message de victoire
-          document.getElementById("word").textContent = "Bien joué ! Tu as trouvé le mot : " + chosenWord;
-          document.getElementById("letters").innerHTML = ""; // Effacer les boutons de lettres
-        } else if (attemptsLeft === 0) {
-          // Nombre d'essais maximum atteint, afficher un message de défaite
-          document.getElementById("word").textContent = "Loser ! Le mot était : " + chosenWord + ". C'était facile quand même.";
-          document.getElementById("letters").innerHTML = ""; // Effacer les boutons de lettres
+        // Désactive le bouton après avoir cliqué
+        document.querySelectorAll(".letter").forEach(btn => {
+          if (btn.textContent === letter) {
+            btn.style.pointerEvents = "none";
+            btn.style.backgroundColor = "red";
+          }
+        });
+      }
+
+      // Mets à jour l'affichage du pendu
+      function updateHangman() {
+        let hangman = document.getElementById("hangman");
+        hangman.innerHTML = "";
+        for (let i = 0; i < maxAttempts - attemptsLeft; i++) {
+          let bar = document.createElement("div");
+          bar.classList.add("hangman-bar");
         }
       }
-      // Désactiver le bouton après avoir cliqué
-      document.querySelectorAll(".letter").forEach(btn => {
-        if (btn.textContent === letter) {
-          btn.style.pointerEvents = "none";
-          btn.style.backgroundColor = "red";
-        }
-      });
-    }
 
-    // Fonction pour mettre à jour l'affichage du pendu
-    function updateHangman() {
-      let hangman = document.getElementById("hangman");
-      hangman.innerHTML = "";
-      for (let i = 0; i < maxAttempts - attemptsLeft; i++) {
-        let bar = document.createElement("div");
-        bar.classList.add("hangman-bar");
-      }
-    }
-
-    // Initialiser le jeu
-    startGame();
-
-    // Bouton pour rejouer
-    document.getElementById("play-again").addEventListener("click", () => {
-      document.getElementById("letters").innerHTML = ""; // Effacer les boutons de lettres
+      // Initialiser le jeu
       startGame();
-    });
 
-  </script>
-</body>
+      // Bouton pour rejouer
+      document.getElementById("play-again").addEventListener("click", () => {
+        document.getElementById("letters").innerHTML = ""; // Cache les lettres
+        startGame();
+      });
+
+    </script>
+  </body>
 </html>
